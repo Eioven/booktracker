@@ -1,0 +1,56 @@
+from rest_framework import serializers
+from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
+
+User = get_user_model()
+
+
+class RegisterSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для регистрации нового пользователя.
+
+    Принимает: username, email, password, password_confirm
+    Возвращает: id, username, email
+    """
+
+    password = serializers.CharField(
+        write_only=True,
+        required=True,
+        validators=[validate_password]
+    )
+    password_confirm = serializers.CharField(
+        write_only=True,
+        required=True
+    )
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'password', 'password_confirm')
+
+    def validate(self, data):
+        if data['password'] != data['password_confirm']:
+            raise serializers.ValidationError(
+                {'password': 'Пароли не совпадают.'}
+            )
+        return data
+
+    def create(self, validated_data):
+        validated_data.pop('password_confirm')
+
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data.get('email', ''),
+            password=validated_data['password']
+        )
+        return user
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для отображения данных пользователя.
+    Используется чтобы вернуть информацию о текущем пользователе.
+    """
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'avatar_url', 'date_joined')
