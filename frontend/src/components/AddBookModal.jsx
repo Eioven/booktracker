@@ -78,6 +78,8 @@ const AddBookModal = ({ isOpen, onClose, onBookAdded }) => {
     if (!manualForm.author.trim()) errors.author = 'Введите автора'
     if (manualForm.total_pages && isNaN(Number(manualForm.total_pages))) {
       errors.total_pages = 'Введите число'
+    } else if (manualForm.total_pages && Number(manualForm.total_pages) <= 0) {
+      errors.total_pages = 'Количество страниц должно быть больше 0'
     }
     if (manualForm.published_year && isNaN(Number(manualForm.published_year))) {
       errors.published_year = 'Введите год'

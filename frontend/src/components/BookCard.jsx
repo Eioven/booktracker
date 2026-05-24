@@ -47,7 +47,7 @@ const BookCard = ({ userBook }) => {
   return (
     <div
       onClick={() => navigate(`/library/${userBook.id}`)}
-      className="bg-white rounded-xl border border-gray-200 overflow-hidden
+      className="book-card bg-white rounded-xl border border-gray-200 overflow-hidden
         hover:shadow-md hover:border-gray-300 transition-all duration-200 cursor-pointer
         flex flex-col"
     >

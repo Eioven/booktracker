@@ -154,6 +154,23 @@ def user_books_view(request):
     if request.method == 'POST':
         book_data = request.data.get('book', {})
 
+        title = (book_data.get('title') or '').strip()
+        author_raw = book_data.get('author', '')
+        author_names = [a.strip() for a in author_raw.split(',') if a.strip()]
+        existing_books = Book.objects.filter(title__iexact=title)
+        if author_names:
+            existing_books = existing_books.filter(authors__name__iexact=author_names[0])
+
+        existing_user_book = UserBook.objects.filter(
+            user=request.user,
+            book__in=existing_books,
+        ).first()
+        if existing_user_book:
+            return Response(
+                {'error': 'Эта книга уже есть в вашей библиотеке.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         book = get_or_create_book(book_data)
 
         if UserBook.objects.filter(user=request.user, book=book).exists():

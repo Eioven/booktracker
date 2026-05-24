@@ -1,0 +1,41 @@
+{
+  "name": "booktracker-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "description": "End-to-end автотесты для BookTracker (Playwright + TypeScript)",
+  "scripts": {
+    "test": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:critical": "playwright test --grep @critical",
+    "test:auth": "playwright test tests/auth.spec.ts",
+    "test:library": "playwright test tests/library.spec.ts tests/library-filters.spec.ts",
+    "test:book": "playwright test tests/book.spec.ts",
+    "test:goals": "playwright test tests/goals.spec.ts",
+    "test:stats": "playwright test tests/stats.spec.ts",
+    "test:export": "playwright test tests/export.spec.ts",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:ui": "playwright test --ui",
+    "test:chromium": "playwright test --project=chromium",
+    "test:firefox": "playwright test --project=firefox",
+    "test:webkit": "playwright test --project=webkit",
+    "report": "playwright show-report",
+    "allure:generate": "allure generate allure-results --clean -o allure-report",
+    "allure:open": "allure open allure-report",
+    "allure:serve": "allure serve allure-results",
+    "install:browsers": "playwright install --with-deps",
+    "lint": "tsc --noEmit",
+    "format": "prettier --write \"**/*.{ts,json,md}\""
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^20.11.0",
+    "allure-playwright": "^3.0.7",
+    "dotenv": "^16.4.5",
+    "prettier": "^3.3.3",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
