@@ -1,0 +1,285 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - '**'
+      - '.github/workflows/e2e.yml'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - '**'
+      - '.github/workflows/e2e.yml'
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: 'Какой набор запустить'
+        required: true
+        default: 'regression'
+        type: choice
+        options:
+          - smoke
+          - critical
+          - regression
+
+# Общие переменные для всех job'ов
+env:
+  NODE_VERSION: '20'
+  PYTHON_VERSION: '3.11'
+  DB_NAME: booktracker_test
+  DB_USER: booktracker
+  DB_PASSWORD: booktracker
+  DB_HOST: 127.0.0.1
+  DB_PORT: '5432'
+  SECRET_KEY: ci-secret-key-not-for-production
+  DEBUG: 'True'
+  BASE_URL: http://127.0.0.1:5173
+  API_URL: http://127.0.0.1:8000
+  CI: 'true'
+
+jobs:
+  # ----------------------------------------------------------------------
+  # SMOKE — быстрый набор на каждом PR (~8 тестов с тегом @smoke)
+  # Соответствует "уровню фильтра №1" из раздела ВКР про CI/CD
+  # ----------------------------------------------------------------------
+  smoke:
+    name: Smoke (PR gate)
+    if: github.event_name == 'pull_request' || github.event.inputs.suite == 'smoke'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: booktracker_test
+          POSTGRES_USER: booktracker
+          POSTGRES_PASSWORD: booktracker
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Apply database migrations
+        working-directory: backend
+        run: python manage.py migrate --noinput
+
+      - name: Setup Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: |
+            e2e/package-lock.json
+            frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci || npm install
+
+      - name: Install e2e dependencies
+        working-directory: e2e
+        run: npm ci || npm install
+
+      - name: Install Playwright browsers (chromium only for smoke)
+        working-directory: e2e
+        run: npx playwright install --with-deps chromium
+
+      - name: Run smoke tests
+        working-directory: e2e
+        env:
+          ALLURE_ENVIRONMENT: ci-smoke
+        run: npm run test:smoke -- --project=chromium
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-smoke
+          path: e2e/playwright-report/
+          retention-days: 7
+
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-smoke
+          path: e2e/allure-results/
+          retention-days: 7
+
+  # ----------------------------------------------------------------------
+  # REGRESSION — полный прогон 68 сценариев x 5 проекций
+  # Соответствует "уровню фильтра №2" из раздела ВКР про CI/CD
+  # Шардирование по 2 потокам для ускорения
+  # ----------------------------------------------------------------------
+  regression:
+    name: Regression (shard ${{ matrix.shard }}/${{ matrix.total }})
+    if: github.event_name == 'push' || github.event.inputs.suite == 'regression' || github.event.inputs.suite == 'critical'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+        total: [2]
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: booktracker_test
+          POSTGRES_USER: booktracker
+          POSTGRES_PASSWORD: booktracker
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Apply database migrations
+        working-directory: backend
+        run: python manage.py migrate --noinput
+
+      - name: Setup Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: |
+            e2e/package-lock.json
+            frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci || npm install
+
+      - name: Install e2e dependencies
+        working-directory: e2e
+        run: npm ci || npm install
+
+      - name: Install Playwright browsers
+        working-directory: e2e
+        run: npx playwright install --with-deps
+
+      - name: Choose suite
+        id: suite
+        run: |
+          if [ "${{ github.event.inputs.suite }}" = "critical" ]; then
+            echo "cmd=npm run test:critical -- --shard=${{ matrix.shard }}/${{ matrix.total }}" >> $GITHUB_OUTPUT
+          else
+            echo "cmd=npx playwright test --shard=${{ matrix.shard }}/${{ matrix.total }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run tests
+        working-directory: e2e
+        env:
+          ALLURE_ENVIRONMENT: ci-regression
+        run: ${{ steps.suite.outputs.cmd }}
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-shard-${{ matrix.shard }}
+          path: e2e/playwright-report/
+          retention-days: 14
+
+      - name: Upload Allure raw results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-shard-${{ matrix.shard }}
+          path: e2e/allure-results/
+          retention-days: 14
+
+      - name: Upload test artifacts (trace / video on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-shard-${{ matrix.shard }}
+          path: e2e/test-results/
+          retention-days: 14
+
+  # ----------------------------------------------------------------------
+  # ALLURE — собирает единый отчёт из шардов и публикует артефактом
+  # ----------------------------------------------------------------------
+  allure-report:
+    name: Build Allure report
+    needs: regression
+    if: always() && needs.regression.result != 'skipped'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all allure-results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: allure-results-shard-*
+          path: allure-input
+          merge-multiple: true
+
+      - name: Setup Java for Allure CLI
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Allure CLI
+        run: |
+          curl -L https://github.com/allure-framework/allure2/releases/download/2.30.0/allure-2.30.0.tgz -o allure.tgz
+          tar -xzf allure.tgz
+          echo "${{ github.workspace }}/allure-2.30.0/bin" >> $GITHUB_PATH
+
+      - name: Generate Allure report
+        run: allure generate allure-input --clean -o allure-report
+
+      - name: Upload combined Allure report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report/
+          retention-days: 30
