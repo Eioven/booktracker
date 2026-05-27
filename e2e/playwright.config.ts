@@ -97,16 +97,23 @@ export default defineConfig({
       use: { ...devices['Desktop Safari'] },
       grep: /@critical|@smoke/,
     },
-    {
-      name: 'mobile-chrome',
-      use: { ...devices['Pixel 7'] },
-      grep: /@smoke/,
-    },
-    {
-      name: 'mobile-safari',
-      use: { ...devices['iPhone 14'] },
-      grep: /@smoke/,
-    },
+    // Mobile-проекции включаются только локально (CI=true их отключает).
+    // Mobile-вёрстка BookTracker требует отдельной адаптации Page Object'ов —
+    // burger-меню, скрытые кнопки и т.д. вне scope текущего этапа.
+    ...(IS_CI
+      ? []
+      : [
+          {
+            name: 'mobile-chrome',
+            use: { ...devices['Pixel 7'] },
+            grep: /@smoke/,
+          },
+          {
+            name: 'mobile-safari',
+            use: { ...devices['iPhone 14'] },
+            grep: /@smoke/,
+          },
+        ]),
   ],
 
   // Авто-запуск серверов. Локально можно отключить через START_WEB_SERVERS=false.

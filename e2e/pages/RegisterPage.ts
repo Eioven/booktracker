@@ -35,10 +35,13 @@ export class RegisterPage extends BasePage {
 
   /** Сообщение валидации поля. */
   fieldError(label: string): Locator {
+    // Используем aria-describedby от input'а с конкретным label —
+    // это единственный надёжный способ найти именно ошибку (не "*" required-индикатор)
+    // и работает одинаково во всех браузерах включая webkit.
     return this.page
       .locator('label', { hasText: label })
       .locator('..')
-      .locator('.text-red-500, .text-red-600')
+      .locator('[role="alert"]')
   }
 
   get serverError(): Locator {

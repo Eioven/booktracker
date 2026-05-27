@@ -32,7 +32,7 @@ export class LibraryPage extends BasePage {
   }
 
   get searchReset(): Locator {
-    return this.page.getByRole('button', { name: 'Сбросить' })
+    return this.page.getByRole('button', { name: 'Сбросить', exact: true })
   }
 
   /** Кнопка-фильтр статуса. */
