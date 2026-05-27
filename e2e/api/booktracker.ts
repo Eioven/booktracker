@@ -2,13 +2,6 @@ import { APIRequestContext, request, expect } from '@playwright/test'
 import type { TestUser } from '@data/users'
 import type { ManualBook, BookStatus } from '@data/books'
 
-/**
- * Тонкая обёртка над публичным REST API BookTracker.
- * Используется в фикстурах и сетапных шагах — НЕ в самих тестах.
- *
- * Базовый URL берётся из переменной окружения API_URL или из .env.
- */
-
 const DEFAULT_API_URL = process.env.API_URL ?? 'http://127.0.0.1:8000'
 
 export interface AuthTokens {
@@ -45,7 +38,6 @@ export interface GoalApiPayload {
   progress_percent: number
 }
 
-/** Создаёт изолированный APIRequestContext с базовым URL бэкенда. */
 export async function createApiContext(baseURL = DEFAULT_API_URL): Promise<APIRequestContext> {
   return request.newContext({
     baseURL,
@@ -53,7 +45,6 @@ export async function createApiContext(baseURL = DEFAULT_API_URL): Promise<APIRe
   })
 }
 
-/** Регистрация пользователя. Возвращает токены и данные пользователя. */
 export async function registerUser(
   api: APIRequestContext,
   user: TestUser,
@@ -70,7 +61,6 @@ export async function registerUser(
   return (await response.json()) as RegisterResponse
 }
 
-/** Логин. Возвращает токены доступа. */
 export async function loginUser(
   api: APIRequestContext,
   username: string,
@@ -83,7 +73,6 @@ export async function loginUser(
   return (await response.json()) as RegisterResponse
 }
 
-/** Создаёт авторизованный API-контекст под конкретного пользователя. */
 export async function createAuthorizedContext(
   user: TestUser,
   baseURL = DEFAULT_API_URL,
@@ -103,7 +92,6 @@ export async function createAuthorizedContext(
   return { api, tokens, userId: createdUser.id }
 }
 
-/** Добавляет книгу через API (вкладка «Вручную»). Возвращает UserBook. */
 export async function addBookViaApi(
   api: APIRequestContext,
   book: ManualBook,
@@ -125,7 +113,6 @@ export async function addBookViaApi(
   return (await response.json()) as BookApiPayload
 }
 
-/** Обновляет UserBook: статус, страницу, рейтинг, отзыв. */
 export async function updateUserBook(
   api: APIRequestContext,
   userBookId: number,
@@ -143,7 +130,6 @@ export async function updateUserBook(
   return (await response.json()) as BookApiPayload
 }
 
-/** Удаляет книгу из библиотеки пользователя. */
 export async function deleteUserBook(
   api: APIRequestContext,
   userBookId: number,
@@ -152,7 +138,6 @@ export async function deleteUserBook(
   expect([200, 204]).toContain(response.status())
 }
 
-/** Получает список UserBook. */
 export async function listBooks(
   api: APIRequestContext,
   filters: { status?: BookStatus; search?: string } = {},
@@ -162,7 +147,6 @@ export async function listBooks(
   return (await response.json()) as BookApiPayload[]
 }
 
-/** Создание цели чтения. */
 export async function createGoalViaApi(
   api: APIRequestContext,
   goal: {
@@ -186,7 +170,6 @@ export async function createGoalViaApi(
   return (await response.json()) as GoalApiPayload
 }
 
-/** Добавление заметки к UserBook. */
 export async function addNoteViaApi(
   api: APIRequestContext,
   userBookId: number,
@@ -199,7 +182,6 @@ export async function addNoteViaApi(
   return (await response.json()) as { id: number; content: string }
 }
 
-/** Добавление цитаты. */
 export async function addQuoteViaApi(
   api: APIRequestContext,
   userBookId: number,

@@ -1,6 +1,5 @@
 import api from './axios'
 
-
 export const getBooks = (params) =>
   api.get('/books/', { params })
 

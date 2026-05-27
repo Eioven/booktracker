@@ -51,7 +51,7 @@ const BookCard = ({ userBook }) => {
         hover:shadow-md hover:border-gray-300 transition-all duration-200 cursor-pointer
         flex flex-col"
     >
-      {/* Обложка книги */}
+
       <div className="aspect-[3/4] bg-gray-100 relative overflow-hidden">
         {book.cover_url ? (
           <img
@@ -80,7 +80,6 @@ const BookCard = ({ userBook }) => {
           <p className="text-xs text-gray-500 mt-0.5 truncate">{authors}</p>
         </div>
 
-        {/* Статус */}
         <span className={`text-xs px-2 py-0.5 rounded-full font-medium w-fit ${statusConfig.className}`}>
           {statusConfig.label}
         </span>

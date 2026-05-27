@@ -30,15 +30,12 @@ const ProfilePage = () => {
         loginUser(updatedUser, tokens)
       }} />
 
-      {/* Секция экспорта */}
       <ExportSection />
 
     </div>
   )
 }
 
-// ==========================================
-// СЕКЦИЯ ПРОФИЛЯ
 // ==========================================
 
 const ProfileSection = ({ user, onUpdated }) => {
@@ -138,7 +135,6 @@ const ProfileSection = ({ user, onUpdated }) => {
         </div>
       </div>
 
-      {/* Сообщения */}
       {successMsg && (
         <div className="mb-4 p-3 bg-green-50 border border-green-200
           rounded-lg text-green-700 text-sm">
@@ -153,7 +149,7 @@ const ProfileSection = ({ user, onUpdated }) => {
       )}
 
       {editing ? (
-        /* Форма редактирования */
+
         <form onSubmit={handleSave} className="flex flex-col gap-4">
           <Input
             label="Имя пользователя"
@@ -213,10 +209,6 @@ const InfoRow = ({ label, value }) => (
     <span className="text-sm text-gray-900">{value}</span>
   </div>
 )
-
-// ==========================================
-// СЕКЦИЯ ЭКСПОРТА
-// ==========================================
 
 const ExportSection = () => {
   const [formats, setFormats] = useState({
@@ -327,10 +319,8 @@ const ExportSection = () => {
               </div>
             </div>
 
-            {/* Нижняя строка: выбор формата + кнопка */}
             <div className="flex items-center justify-between gap-3">
 
-              {/* Переключатель формата */}
               <div className="flex gap-1 bg-white border border-gray-200
                 rounded-lg p-0.5">
                 {['csv', 'pdf'].map((fmt) => (
@@ -351,7 +341,6 @@ const ExportSection = () => {
                 ))}
               </div>
 
-              {/* Кнопка скачивания */}
               <Button
                 variant="secondary"
                 disabled={loading[type]}
@@ -371,6 +360,5 @@ const ExportSection = () => {
     </div>
   )
 }
-
 
 export default ProfilePage

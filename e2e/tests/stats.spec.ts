@@ -1,10 +1,6 @@
 import { test, expect } from '@fixtures/base'
 import * as allure from '@helpers/allure'
 
-/**
- * Блок 5. Статистика — 6 сценариев (3 @critical).
- */
-
 test.describe('Блок 5. Статистика', () => {
   test.beforeEach(async () => {
     await allure.epic('Статистика')
@@ -45,7 +41,7 @@ test.describe('Блок 5. Статистика', () => {
   }) => {
     void authenticatedPage
     await statsPage.open()
-    // У свежего пользователя данных нет — должна быть карточка-заглушка
+
     await expect(statsPage.emptyState).toBeVisible()
   })
 
@@ -64,7 +60,7 @@ test.describe('Блок 5. Статистика', () => {
   }) => {
     void libraryWithBooks
     await statsPage.open()
-    // Жанры могут отсутствовать на тестовых данных, поэтому смягчаем проверку
+
     const hasGenres = await statsPage.genresChartHeader.isVisible().catch(() => false)
     const hasEmpty = await statsPage.emptyState.isVisible().catch(() => false)
     expect(hasGenres || hasEmpty).toBeTruthy()

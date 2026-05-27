@@ -7,8 +7,6 @@ export class RegisterPage extends BasePage {
     super(page)
   }
 
-  // ===== Локаторы =====
-
   get usernameInput(): Locator {
     return this.page.locator('input[name="username"]')
   }
@@ -33,11 +31,8 @@ export class RegisterPage extends BasePage {
     return this.page.getByRole('link', { name: /Войти|Войдите/ })
   }
 
-  /** Сообщение валидации поля. */
   fieldError(label: string): Locator {
-    // Используем aria-describedby от input'а с конкретным label —
-    // это единственный надёжный способ найти именно ошибку (не "*" required-индикатор)
-    // и работает одинаково во всех браузерах включая webkit.
+
     return this.page
       .locator('label', { hasText: label })
       .locator('..')
@@ -47,8 +42,6 @@ export class RegisterPage extends BasePage {
   get serverError(): Locator {
     return this.page.locator('.bg-red-50').first()
   }
-
-  // ===== Действия =====
 
   async open(): Promise<void> {
     await this.goto('/register')

@@ -2,10 +2,6 @@ import { test, expect } from '@fixtures/base'
 import { startOfYear, endOfYear, startOfMonth, endOfMonth, daysFromNow } from '@helpers/dates'
 import * as allure from '@helpers/allure'
 
-/**
- * Блок 4. Цели чтения — 9 сценариев (5 @critical).
- */
-
 test.describe('Блок 4. Цели чтения', () => {
   test.beforeEach(async () => {
     await allure.epic('Цели')
@@ -126,7 +122,7 @@ test.describe('Блок 4. Цели чтения', () => {
     page,
   }) => {
     await goalsPage.open()
-    // Создаём цель «1 книга в этом году»
+
     await goalsPage.createGoal({
       periodType: 'year',
       measureType: 'books',
@@ -134,8 +130,7 @@ test.describe('Блок 4. Цели чтения', () => {
       periodStart: startOfYear(),
       periodEnd: endOfYear(),
     })
-    // У нас уже есть finished-книга в фикстуре — прогресс должен быть ≥ 0
-    // Проверяем, что карточка содержит «N из 1 книг»
+
     await page.reload()
     await expect(page.getByText(/из 1 книг/)).toBeVisible()
     void libraryWithBooks

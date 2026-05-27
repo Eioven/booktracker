@@ -2,10 +2,6 @@ import { test, expect } from '@fixtures/base'
 import { STATUS_LABELS } from '@data/books'
 import * as allure from '@helpers/allure'
 
-/**
- * Блок 2. Библиотека — часть 2: фильтрация по статусам (8 сценариев).
- */
-
 test.describe('Блок 2. Библиотека — фильтрация', () => {
   test.beforeEach(async () => {
     await allure.epic('Библиотека')

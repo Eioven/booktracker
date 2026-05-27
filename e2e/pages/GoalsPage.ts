@@ -14,7 +14,6 @@ export class GoalsPage extends BasePage {
     super(page)
   }
 
-  // ===== Локаторы =====
   get header(): Locator {
     return this.page.getByRole('heading', { name: 'Цели чтения', exact: true })
   }
@@ -34,7 +33,6 @@ export class GoalsPage extends BasePage {
       .first()
   }
 
-  // ===== Модалка =====
   get modalTitle(): Locator {
     return this.page.getByRole('heading', { name: /Новая цель|Редактировать цель/ })
   }
@@ -63,8 +61,6 @@ export class GoalsPage extends BasePage {
     return this.page.getByRole('button', { name: /Создать цель|Сохранить/ })
   }
 
-  // ===== Действия =====
-
   async open(): Promise<void> {
     await this.goto('/goals')
     await expect(this.header).toBeVisible()
@@ -80,10 +76,10 @@ export class GoalsPage extends BasePage {
   }
 
   async fillForm(data: GoalFormData): Promise<void> {
-    // Период
+
     const periodLabel = data.periodType === 'year' ? 'Год' : 'Месяц'
     await this.periodTabInModal(periodLabel).click()
-    // Единица
+
     const measureLabel = data.measureType === 'books' ? 'Книги' : 'Страницы'
     await this.measureTabInModal(measureLabel).click()
 

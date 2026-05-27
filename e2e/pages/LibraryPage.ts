@@ -13,8 +13,6 @@ export class LibraryPage extends BasePage {
     this.addBookModal = new AddBookModal(page)
   }
 
-  // ===== Локаторы =====
-
   get header(): Locator {
     return this.page.getByRole('heading', { name: 'Библиотека' })
   }
@@ -35,17 +33,14 @@ export class LibraryPage extends BasePage {
     return this.page.getByRole('button', { name: 'Сбросить', exact: true })
   }
 
-  /** Кнопка-фильтр статуса. */
   statusFilter(filter: LibraryFilter): Locator {
     return this.page.getByRole('button', { name: STATUS_FILTER_LABELS[filter], exact: true })
   }
 
-  /** Контейнер всех карточек книг. */
   get bookCards(): Locator {
     return this.page.locator('.book-card')
   }
 
-  /** Карточка книги по точному названию. */
   bookCardByTitle(title: string): Locator {
     const escapedTitle = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     return this.bookCards
@@ -53,7 +48,6 @@ export class LibraryPage extends BasePage {
       .first()
   }
 
-  /** Текстовая подпись «N книг / книги / книгу». */
   get bookCountText(): Locator {
     return this.page.locator('p', { hasText: /книг/ }).first()
   }
@@ -61,8 +55,6 @@ export class LibraryPage extends BasePage {
   get emptyState(): Locator {
     return this.page.getByText(/В вашей библиотеке пока ничего нет|Ничего не найдено|У вас пока нет|нет/i)
   }
-
-  // ===== Действия =====
 
   async open(): Promise<void> {
     await this.goto('/library')
@@ -101,8 +93,6 @@ export class LibraryPage extends BasePage {
     await this.bookCardByTitle(title).click()
     await this.page.waitForURL(/\/library\/\d+/)
   }
-
-  // ===== Ассерты =====
 
   async expectBookVisible(title: string): Promise<void> {
     await expect(this.bookCardByTitle(title)).toBeVisible()

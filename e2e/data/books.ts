@@ -20,7 +20,6 @@ export function buildManualBook(overrides: Partial<ManualBook> = {}): ManualBook
   }
 }
 
-/** Полезный набор фикстурных книг для тестов фильтров и статистики. */
 export function buildBookBatch(): ManualBook[] {
   return [
     buildManualBook({ title: `Книга-1 ${randomString(4)}`, totalPages: 200 }),

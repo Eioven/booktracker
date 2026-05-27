@@ -31,7 +31,6 @@ export class DashboardPage extends BasePage {
     await expect(this.header).toBeVisible()
   }
 
-  /** Карточка читаемой книги по её названию. */
   readingBookCard(title: string): Locator {
     return this.readingSection.locator('div', { hasText: title }).first()
   }

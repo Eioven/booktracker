@@ -108,7 +108,6 @@ const CoverEditModal = ({ isOpen, onClose, bookId, currentCover, onUpdated }) =>
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="Изменить обложку">
 
-      {/* Текущая обложка */}
       {currentCover && (
         <div className="flex justify-center mb-4">
           <div className="w-24 h-32 rounded-lg overflow-hidden bg-gray-100">
@@ -121,7 +120,6 @@ const CoverEditModal = ({ isOpen, onClose, bookId, currentCover, onUpdated }) =>
         </div>
       )}
 
-      {/* Вкладки */}
       <div className="flex gap-1 bg-gray-100 p-1 rounded-lg mb-4">
         <button
           onClick={() => setActiveTab('url')}

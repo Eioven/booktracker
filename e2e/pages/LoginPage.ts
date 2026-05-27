@@ -6,8 +6,6 @@ export class LoginPage extends BasePage {
     super(page)
   }
 
-  // ===== Локаторы =====
-
   get usernameInput(): Locator {
     return this.page.locator('input[name="username"]')
   }
@@ -24,20 +22,16 @@ export class LoginPage extends BasePage {
     return this.page.getByRole('link', { name: /Зарегистрироваться|Зарегистрируйтесь|Создать аккаунт/i })
   }
 
-  /** Универсальный контейнер для серверной ошибки (любой алерт/красный блок). */
   get serverError(): Locator {
     return this.page.locator('.bg-red-50, [role="alert"]').first()
   }
 
-  /** Сообщение валидации, привязанное к конкретному полю. */
   fieldError(field: 'Имя пользователя' | 'Пароль'): Locator {
     return this.page
       .locator('label', { hasText: field })
       .locator('..')
       .locator('.text-red-500, .text-red-600')
   }
-
-  // ===== Действия =====
 
   async open(): Promise<void> {
     await this.goto('/login')
@@ -57,8 +51,6 @@ export class LoginPage extends BasePage {
     await this.fillForm(username, password)
     await this.submit()
   }
-
-  // ===== Ассерты =====
 
   async expectOnLoginPage(): Promise<void> {
     await expect(this.page).toHaveURL(/\/login/)

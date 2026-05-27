@@ -136,7 +136,6 @@ const AddBookModal = ({ isOpen, onClose, onBookAdded }) => {
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="Добавить книгу">
 
-      {/* Вкладки */}
       <div className="flex gap-1 bg-gray-100 p-1 rounded-lg mb-4">
         <button
           onClick={() => setActiveTab(TABS.SEARCH)}
@@ -170,11 +169,9 @@ const AddBookModal = ({ isOpen, onClose, onBookAdded }) => {
         </div>
       )}
 
-      {/* ===== ВКЛАДКА ПОИСКА ===== */}
       {activeTab === TABS.SEARCH && (
         <div className="flex flex-col gap-4">
 
-          {/* Строка поиска */}
           <div className="flex gap-2">
             <input
               type="text"
@@ -190,10 +187,8 @@ const AddBookModal = ({ isOpen, onClose, onBookAdded }) => {
             </Button>
           </div>
 
-          {/* Состояние загрузки */}
           {searching && <Spinner />}
 
-          {/* Ошибка поиска */}
           {searchError && !searching && (
             <p className="text-sm text-gray-500 text-center">{searchError}</p>
           )}

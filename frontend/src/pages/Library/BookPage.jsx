@@ -11,7 +11,6 @@ import Spinner from '../../components/ui/Spinner'
 import StarRating from '../../components/ui/StarRating'
 import CoverEditModal from '../../components/CoverEditModal'
 
-// Конфиг статусов
 const STATUS_OPTIONS = [
   { value: 'want_to_read', label: 'Хочу прочитать' },
   { value: 'reading',      label: 'Читаю'           },
@@ -25,10 +24,6 @@ const STATUS_COLORS = {
   finished:     'bg-green-100 text-green-700',
   dropped:      'bg-red-100 text-red-600',
 }
-
-// ==========================================
-// ГЛАВНЫЙ КОМПОНЕНТ
-// ==========================================
 
 const BookPage = () => {
   const { id } = useParams()
@@ -66,7 +61,6 @@ const BookPage = () => {
       setLoading(false)
     }
   }
-
 
   const fetchNotes = async () => {
     setNotesLoading(true)
@@ -144,7 +138,6 @@ const BookPage = () => {
   return (
     <div className="max-w-4xl">
 
-      {/* Кнопка назад */}
       <button
         onClick={() => navigate('/library')}
         className="flex items-center gap-2 text-gray-500 hover:text-gray-700
@@ -157,10 +150,8 @@ const BookPage = () => {
         Библиотека
       </button>
 
-      {/* Верхняя секция */}
       <div className="flex gap-8 mb-8">
 
-        {/* Обложка */}
         <div className="flex flex-col items-center gap-2 flex-shrink-0">
           <div className="w-36 h-52 bg-gray-100 rounded-xl overflow-hidden shadow-md">
             {coverUrl ? (
@@ -238,7 +229,6 @@ const BookPage = () => {
         </div>
       )}
 
-      {/* Отзыв */}
       <ReviewSection
         review={review}
         onSave={(text) => handleUpdateBook({ review: text })}
@@ -294,14 +284,12 @@ const BookPage = () => {
         )}
       </div>
 
-      {/* Удаление */}
       <div className="mt-12 pt-6 border-t border-gray-200">
         <Button variant="danger" onClick={handleDeleteBook}>
           Удалить из библиотеки
         </Button>
       </div>
 
-      {/* Модалка обложки внутри BookPage, после всего контента */}
       <CoverEditModal
         isOpen={isCoverModalOpen}
         onClose={() => setIsCoverModalOpen(false)}
@@ -319,10 +307,6 @@ const BookPage = () => {
     </div>
   )
 }
-
-// ==========================================
-// ВСПОМОГАТЕЛЬНЫЕ КОМПОНЕНТЫ
-// ==========================================
 
 const StatusSelector = ({ status, onChange }) => (
   <div className="flex flex-col gap-1">
@@ -708,8 +692,6 @@ const QuotesSection = ({ quotes, loading, bookId, onAdd, onDelete }) => {
   )
 }
 
-// ==========================================
-// УТИЛИТЫ
 // ==========================================
 
 const formatDate = (dateString) => {

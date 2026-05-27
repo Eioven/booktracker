@@ -6,15 +6,10 @@ from django.db.models.functions import TruncWeek, TruncMonth
 
 from books.models import UserBook, ReadingSession
 
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def stats_view(request):
     user = request.user
-
-    # ==========================================
-    # 1. ОБЩИЕ ЦИФРЫ
-    # ==========================================
 
     all_user_books = UserBook.objects.filter(
         user=user
@@ -36,10 +31,6 @@ def stats_view(request):
     ).aggregate(avg=Avg('rating'))['avg']
     average_rating = round(average_rating, 2) if average_rating else None
 
-    # ==========================================
-    # 2. РАСПРЕДЕЛЕНИЕ ПО ЖАНРАМ
-    # ==========================================
-
     genres = all_user_books.filter(
         status='finished',
         book__genres__isnull=False
@@ -56,10 +47,6 @@ def stats_view(request):
         }
         for item in genres
     ]
-
-    # ==========================================
-    # 3. ТОП АВТОРОВ
-    # ==========================================
 
     top_authors = all_user_books.filter(
         status='finished'
@@ -82,10 +69,6 @@ def stats_view(request):
         for item in top_authors
     ]
 
-    # ==========================================
-    # 4. ДИНАМИКА ПО МЕСЯЦАМ
-    # ==========================================
-
     monthly_reading = ReadingSession.objects.filter(
         user_book__user=user
     ).annotate(
@@ -104,10 +87,6 @@ def stats_view(request):
         for item in monthly_reading
     ]
 
-    # ==========================================
-    # 5. ДИНАМИКА ПО НЕДЕЛЯМ
-    # ==========================================
-
     weekly_reading = ReadingSession.objects.filter(
         user_book__user=user
     ).annotate(
@@ -123,10 +102,6 @@ def stats_view(request):
         }
         for item in reversed(list(weekly_reading))
     ]
-
-    # ==========================================
-    # 6. КАЛЕНДАРЬ ЧТЕНИЯ
-    # ==========================================
 
     sessions = ReadingSession.objects.filter(
         user_book__user=user

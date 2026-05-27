@@ -26,15 +26,13 @@ export interface LibraryWithBooks {
 }
 
 type Fixtures = {
-  // API
+
   apiContext: APIRequestContext
 
-  // Пользователи и данные
   freshUser: TestUser
   authenticatedPage: { page: Page; user: TestUser; tokens: AuthTokens; api: APIRequestContext }
   libraryWithBooks: LibraryWithBooks
 
-  // Page Objects
   loginPage: LoginPage
   registerPage: RegisterPage
   dashboardPage: DashboardPage
@@ -45,10 +43,6 @@ type Fixtures = {
   profilePage: ProfilePage
 }
 
-/**
- * Положить токены в localStorage до загрузки приложения,
- * чтобы AuthContext подхватил их при инициализации.
- */
 async function seedAuthStorage(page: Page, user: TestUser, tokens: AuthTokens, userId: number) {
   await page.addInitScript(
     ([accessToken, refreshToken, payload]) => {
@@ -69,19 +63,17 @@ async function seedAuthStorage(page: Page, user: TestUser, tokens: AuthTokens, u
 }
 
 export const test = base.extend<Fixtures>({
-  // Неавторизованный API-контекст — для регистрации, негативных проверок логина
+
   apiContext: async ({}, use) => {
     const api = await createApiContext()
     await use(api)
     await api.dispose()
   },
 
-  // Свежие данные пользователя (не зарегистрирован)
   freshUser: async ({}, use) => {
     await use(buildUser())
   },
 
-  // Зарегистрированный пользователь + страница с подложенными токенами
   authenticatedPage: async ({ page }, use) => {
     const user = buildUser()
     const { api, tokens, userId } = await createAuthorizedContext(user)
@@ -90,7 +82,6 @@ export const test = base.extend<Fixtures>({
     await api.dispose()
   },
 
-  // Готовая библиотека с тремя книгами: want_to_read, reading, finished
   libraryWithBooks: async ({ page }, use) => {
     const user = buildUser()
     const { api, tokens, userId } = await createAuthorizedContext(user)
@@ -109,7 +100,6 @@ export const test = base.extend<Fixtures>({
     await api.dispose()
   },
 
-  // Page Objects
   loginPage: async ({ page }, use) => use(new LoginPage(page)),
   registerPage: async ({ page }, use) => use(new RegisterPage(page)),
   dashboardPage: async ({ page }, use) => use(new DashboardPage(page)),

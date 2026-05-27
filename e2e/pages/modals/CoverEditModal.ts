@@ -34,7 +34,6 @@ export class CoverEditModal {
     return this.root.getByRole('button', { name: /Сохранить/ })
   }
 
-  /** Скрытый <input type="file"> — Playwright умеет работать и со скрытым. */
   get fileInput(): Locator {
     return this.root.locator('input[type="file"]')
   }

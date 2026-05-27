@@ -9,7 +9,6 @@ export class ProfilePage extends BasePage {
     super(page)
   }
 
-  // ===== Локаторы =====
   get header(): Locator {
     return this.page.getByRole('heading', { name: 'Профиль', exact: true })
   }
@@ -38,14 +37,9 @@ export class ProfilePage extends BasePage {
     return this.page.getByText('Профиль успешно обновлён')
   }
 
-  // ===== Экспорт =====
-
-  /** Контейнер блока экспорта по типу (library/notes). */
   exportBlock(type: ExportType): Locator {
     const label = type === 'library' ? 'Библиотека' : 'Заметки и цитаты'
-    // В JSX каждый блок — это `<div class="p-4 border rounded-xl ...">`.
-    // Без этого ограничения `div` совпадает и с родительским контейнером,
-    // охватывающим оба блока экспорта.
+
     return this.page
       .locator('div.p-4.border.rounded-xl')
       .filter({ has: this.page.locator('p.text-sm.font-medium.text-gray-900', { hasText: label }) })
@@ -60,8 +54,6 @@ export class ProfilePage extends BasePage {
     return this.exportBlock(type).getByRole('button', { name: /Скачать/ })
   }
 
-  // ===== Действия =====
-
   async open(): Promise<void> {
     await this.goto('/profile')
     await expect(this.header).toBeVisible()
@@ -71,10 +63,6 @@ export class ProfilePage extends BasePage {
     await this.formatSwitch(type, format).click()
   }
 
-  /**
-   * Запускает экспорт и возвращает Promise<Download>.
-   * Кладёт скачанный файл во временную папку Playwright.
-   */
   async triggerExport(type: ExportType, format: ExportFormat) {
     await this.setExportFormat(type, format)
     const downloadPromise = this.page.waitForEvent('download', { timeout: 30_000 })

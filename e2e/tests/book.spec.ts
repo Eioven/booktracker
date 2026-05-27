@@ -4,11 +4,6 @@ import { createTempPng, createInvalidTypeFile, createOversizedFile, safeRemove }
 import { randomString } from '@helpers/random'
 import * as allure from '@helpers/allure'
 
-/**
- * Блок 3. Страница книги — 16 сценариев (10 @critical, 1 @smoke).
- * Покрывает статус, прогресс, оценку, отзыв, заметки, цитаты, обложку, удаление.
- */
-
 test.describe('Блок 3. Страница книги', () => {
   test.beforeEach(async () => {
     await allure.epic('Книга')
@@ -35,7 +30,7 @@ test.describe('Блок 3. Страница книги', () => {
     const book = libraryWithBooks.books.find((b) => b.status === 'want_to_read')!
     await bookPage.openById(book.id)
     await bookPage.changeStatus('reading')
-    // Кнопка «Читаю» становится активной
+
     await expect(bookPage.statusOption('reading')).toBeVisible()
     await bookPage.page.reload()
     await expect(bookPage.statusOption('reading')).toBeVisible()
@@ -56,7 +51,7 @@ test.describe('Блок 3. Страница книги', () => {
     const book = libraryWithBooks.books.find((b) => b.status === 'reading')!
     await bookPage.openById(book.id)
     await bookPage.setCurrentPage(120)
-    // Прогресс отображается процентами
+
     await expect(bookPage.page.getByText('120').first()).toBeVisible()
   })
 
@@ -79,7 +74,7 @@ test.describe('Блок 3. Страница книги', () => {
     await bookPage.openById(book.id)
     await bookPage.setRating(5)
     await bookPage.page.reload()
-    // После reload пятая звезда должна остаться заполненной
+
     await expect(bookPage.ratingStars.nth(4)).toBeVisible()
   })
 
@@ -91,7 +86,7 @@ test.describe('Блок 3. Страница книги', () => {
     await bookPage.openById(book.id)
     await bookPage.setRating(4)
     await bookPage.setRating(4)
-    // Здесь просто проверяем, что страница не упала
+
     await expect(bookPage.bookTitle).toBeVisible()
   })
 
@@ -117,7 +112,7 @@ test.describe('Блок 3. Страница книги', () => {
     await bookPage.openById(book.id)
     await bookPage.addNote(note)
     await expect(bookPage.page.getByText(note)).toBeVisible()
-    // Удалить через кнопку рядом с заметкой
+
     bookPage.page.once('dialog', (d) => d.accept())
     const card = bookPage.page.locator('div', { hasText: note }).first()
     const deleteBtn = card.getByRole('button', { name: /Удалить/ }).first()
@@ -154,7 +149,7 @@ test.describe('Блок 3. Страница книги', () => {
     await bookPage.openById(book.id)
     await bookPage.openCoverModal()
     await bookPage.coverModal.saveByUrl('https://covers.openlibrary.org/b/id/10909258-L.jpg')
-    // Модалка закрылась
+
     await expect(bookPage.coverModal.title).toBeHidden({ timeout: 10_000 })
   })
 
@@ -198,11 +193,10 @@ test.describe('Блок 3. Страница книги', () => {
     const book = libraryWithBooks.books[0]!
     await bookPage.openById(book.id)
     await bookPage.deleteBook()
-    // После удаления — на странице библиотеки, книги нет
+
     await libraryPage.expectBookNotVisible(book.book.title)
   })
 
-  // Pequeño cleanup helper para evitar warnings de variables sin usar
   test.afterAll(() => {
     safeRemove(createTempPng('noop'))
   })

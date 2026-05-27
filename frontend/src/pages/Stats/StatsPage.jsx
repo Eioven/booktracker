@@ -14,10 +14,6 @@ const GENRE_COLORS = [
   '#10b981', '#ef4444', '#06b6d4', '#f97316',
 ]
 
-// ==========================================
-// ГЛАВНЫЙ КОМПОНЕНТ
-// ==========================================
-
 const StatsPage = () => {
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -105,8 +101,6 @@ const StatsPage = () => {
 }
 
 // ==========================================
-// СВОДНЫЕ ЦИФРЫ
-// ==========================================
 
 const SummarySection = ({ summary }) => {
   const cards = [
@@ -168,10 +162,6 @@ const SummarySection = ({ summary }) => {
   )
 }
 
-// ==========================================
-// ГРАФИК ПО МЕСЯЦАМ
-// ==========================================
-
 const MonthlyChart = ({ data }) => {
   const formattedData = data.map(item => ({
     ...item,
@@ -215,8 +205,6 @@ const MonthlyChart = ({ data }) => {
   )
 }
 
-// ==========================================
-// ГРАФИК ПО НЕДЕЛЯМ
 // ==========================================
 
 const WeeklyChart = ({ data }) => {
@@ -262,8 +250,6 @@ const WeeklyChart = ({ data }) => {
   )
 }
 
-// ==========================================
-// ДИАГРАММА ЖАНРОВ
 // ==========================================
 
 const GenresChart = ({ genres }) => {
@@ -322,8 +308,6 @@ const GenresChart = ({ genres }) => {
 }
 
 // ==========================================
-// ТАБЛИЦА АВТОРОВ
-// ==========================================
 
 const AuthorsTable = ({ authors }) => (
   <div className="bg-white border border-gray-200 rounded-xl p-6">
@@ -359,8 +343,6 @@ const AuthorsTable = ({ authors }) => (
   </div>
 )
 
-// ==========================================
-// КАЛЕНДАРЬ ЧТЕНИЯ
 // ==========================================
 
 const CalendarSection = ({ calendar }) => {
@@ -496,8 +478,6 @@ const CalendarSection = ({ calendar }) => {
 }
 
 // ==========================================
-// ПУСТОЕ СОСТОЯНИЕ
-// ==========================================
 
 const EmptyState = () => (
   <div className="py-20 flex flex-col items-center gap-4 text-center">
@@ -519,10 +499,6 @@ const EmptyState = () => (
     </div>
   </div>
 )
-
-// ==========================================
-// УТИЛИТЫ
-// ==========================================
 
 const getHeatLevel = (pages) => {
   if (pages === 0) return 0

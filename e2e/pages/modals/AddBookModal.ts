@@ -1,10 +1,6 @@
 import { Locator, Page, expect } from '@playwright/test'
 import type { ManualBook } from '@data/books'
 
-/**
- * Модальное окно «Добавить книгу».
- * Содержит две вкладки: «Поиск» (Open Library) и «Вручную».
- */
 export class AddBookModal {
   readonly page: Page
 
@@ -12,9 +8,6 @@ export class AddBookModal {
     this.page = page
   }
 
-  // ===== Корневой элемент модалки =====
-  // Берём «окно» модалки — белый контейнер с rounded-2xl, внутри которого
-  // и шапка, и контент. `.first()` отсекает повторные совпадения.
   get root(): Locator {
     return this.page
       .locator('div.bg-white.rounded-2xl')
@@ -26,7 +19,6 @@ export class AddBookModal {
     return this.page.getByRole('heading', { name: 'Добавить книгу', exact: true })
   }
 
-  // ===== Вкладки =====
   get searchTab(): Locator {
     return this.root.getByRole('button', { name: 'Поиск', exact: true })
   }
@@ -35,7 +27,6 @@ export class AddBookModal {
     return this.root.getByRole('button', { name: 'Вручную', exact: true })
   }
 
-  // ===== Поиск =====
   get searchInput(): Locator {
     return this.root.getByPlaceholder('Название или автор...')
   }
@@ -48,7 +39,6 @@ export class AddBookModal {
     return this.root.locator('.flex.flex-col.gap-2 > div')
   }
 
-  // ===== Ручное добавление =====
   get manualTitle(): Locator {
     return this.root.getByLabel('Название')
   }
@@ -76,8 +66,6 @@ export class AddBookModal {
   get errorBanner(): Locator {
     return this.root.locator('.bg-red-50, .text-red-500, .text-red-600').first()
   }
-
-  // ===== Действия =====
 
   async expectOpen(): Promise<void> {
     await expect(this.title).toBeVisible()
@@ -109,7 +97,6 @@ export class AddBookModal {
     await this.submitManual.click()
   }
 
-  /** Полный сценарий: открыть «Вручную», заполнить, добавить. */
   async addManualBook(book: ManualBook): Promise<void> {
     await this.switchToManual()
     await this.fillManual(book)

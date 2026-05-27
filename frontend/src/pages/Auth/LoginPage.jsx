@@ -72,7 +72,6 @@ const LoginPage = () => {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 w-full max-w-md p-8">
 
-        {/* Заголовок */}
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-bold text-gray-900">
             Вход в аккаунт
@@ -89,7 +88,6 @@ const LoginPage = () => {
           </div>
         )}
 
-        {/* Форма */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
           <Input
@@ -124,7 +122,6 @@ const LoginPage = () => {
 
         </form>
 
-        {/* Ссылка на регистрацию */}
         <p className="text-center text-gray-500 text-sm mt-6">
           Нет аккаунта?{' '}
           <Link

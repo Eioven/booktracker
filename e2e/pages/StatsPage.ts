@@ -14,7 +14,6 @@ export class StatsPage extends BasePage {
     return this.page.getByText('Статистики пока нет')
   }
 
-  /** Карточка из сводки по подписи. */
   summaryCard(label: string): Locator {
     return this.page.locator('div').filter({ hasText: label }).filter({ has: this.page.locator('p.text-2xl') })
   }

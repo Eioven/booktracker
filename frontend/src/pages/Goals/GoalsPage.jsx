@@ -4,10 +4,6 @@ import Button from '../../components/ui/Button'
 import Spinner from '../../components/ui/Spinner'
 import Modal from '../../components/ui/Modal'
 
-// ==========================================
-// ВСПОМОГАТЕЛЬНЫЕ ДАННЫЕ
-// ==========================================
-
 const PERIOD_OPTIONS = [
   { value: 'year',  label: 'Год'   },
   { value: 'month', label: 'Месяц' },
@@ -25,10 +21,6 @@ const EMPTY_FORM = {
   period_start: '',
   period_end:   '',
 }
-
-// ==========================================
-// ГЛАВНЫЙ КОМПОНЕНТ
-// ==========================================
 
 const GoalsPage = () => {
   const [goals, setGoals] = useState([])
@@ -83,7 +75,6 @@ const GoalsPage = () => {
   return (
     <div>
 
-      {/* Шапка */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Цели чтения</h1>
@@ -114,7 +105,6 @@ const GoalsPage = () => {
         </div>
       )}
 
-      {/* Модалка создания/редактирования */}
       <GoalModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -125,10 +115,6 @@ const GoalsPage = () => {
     </div>
   )
 }
-
-// ==========================================
-// КАРТОЧКА ЦЕЛИ
-// ==========================================
 
 const GoalCard = ({ goal, onEdit, onDelete }) => {
   const percent = goal.progress_percent
@@ -144,10 +130,9 @@ const GoalCard = ({ goal, onEdit, onDelete }) => {
     <div className={`bg-white border rounded-xl p-5 flex flex-col gap-4
       ${isCompleted ? 'border-green-300' : 'border-gray-200'}`}>
 
-      {/* Шапка карточки */}
       <div className="flex items-start justify-between">
         <div>
-          {/* Бейдж типа периода */}
+
           <span className={`text-xs px-2 py-0.5 rounded-full font-medium
             ${goal.period_type === 'year'
               ? 'bg-purple-100 text-purple-700'
@@ -163,14 +148,12 @@ const GoalCard = ({ goal, onEdit, onDelete }) => {
           </p>
         </div>
 
-        {/* Процент выполнения */}
         <div className={`text-2xl font-bold
           ${isCompleted ? 'text-green-600' : 'text-blue-600'}`}>
           {percent}%
         </div>
       </div>
 
-      {/* Прогресс-бар */}
       <div>
         <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
           <div
@@ -209,8 +192,6 @@ const GoalCard = ({ goal, onEdit, onDelete }) => {
   )
 }
 
-// ==========================================
-// МОДАЛКА СОЗДАНИЯ / РЕДАКТИРОВАНИЯ
 // ==========================================
 
 const GoalModal = ({ isOpen, onClose, editingGoal, onSaved }) => {
@@ -294,7 +275,7 @@ const GoalModal = ({ isOpen, onClose, editingGoal, onSaved }) => {
     } catch (error) {
       const data = error.response?.data
       if (data && typeof data === 'object') {
-        // Пытаемся показать ошибки по конкретным полям
+
         const fieldErrors = {}
         Object.entries(data).forEach(([key, value]) => {
           fieldErrors[key] = Array.isArray(value) ? value[0] : value
@@ -403,7 +384,6 @@ const GoalModal = ({ isOpen, onClose, editingGoal, onSaved }) => {
 
         </div>
 
-        {/* Целевое значение */}
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium text-gray-700">
             Цель <span className="text-red-500">*</span>
@@ -457,7 +437,6 @@ const GoalModal = ({ isOpen, onClose, editingGoal, onSaved }) => {
           </div>
         </div>
 
-        {/* Даты */}
         <div className="flex gap-3">
           <div className="flex flex-col gap-1 flex-1">
             <label className="text-sm font-medium text-gray-700">
@@ -525,10 +504,6 @@ const GoalModal = ({ isOpen, onClose, editingGoal, onSaved }) => {
   )
 }
 
-// ==========================================
-// ПУСТОЕ СОСТОЯНИЕ
-// ==========================================
-
 const EmptyState = ({ onAdd }) => (
   <div className="py-20 flex flex-col items-center gap-4 text-center">
     <div className="w-16 h-16 bg-gray-100 rounded-full
@@ -549,8 +524,6 @@ const EmptyState = ({ onAdd }) => (
   </div>
 )
 
-// ==========================================
-// УТИЛИТЫ
 // ==========================================
 
 const formatDate = (dateString) => {

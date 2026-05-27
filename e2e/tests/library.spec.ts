@@ -3,11 +3,6 @@ import { buildManualBook } from '@data/books'
 import { randomString } from '@helpers/random'
 import * as allure from '@helpers/allure'
 
-/**
- * Блок 2. Управление библиотекой — часть 1: добавление, удаление, поиск (10 сценариев).
- * Фильтры вынесены в library-filters.spec.ts (8 сценариев).
- */
-
 test.describe('Блок 2. Библиотека — добавление и поиск', () => {
   test.beforeEach(async () => {
     await allure.epic('Библиотека')
@@ -61,7 +56,7 @@ test.describe('Блок 2. Библиотека — добавление и по
     await libraryPage.addBookModal.switchToManual()
     await libraryPage.addBookModal.fillManual(book)
     await libraryPage.addBookModal.submitManualForm()
-    // Либо клиентская валидация, либо серверная ошибка
+
     await expect(libraryPage.addBookModal.root.locator('.text-red-500, .bg-red-50').first()).toBeVisible({
       timeout: 5_000,
     })
@@ -72,12 +67,10 @@ test.describe('Блок 2. Библиотека — добавление и по
     const book = buildManualBook()
     await libraryPage.open()
 
-    // Первое добавление — успешно
     await libraryPage.openAddBookModal()
     await libraryPage.addBookModal.addManualBook(book)
     await libraryPage.expectBookVisible(book.title)
 
-    // Второе — ожидаем ошибку
     await libraryPage.openAddBookModal()
     await libraryPage.addBookModal.switchToManual()
     await libraryPage.addBookModal.fillManual(book)
@@ -97,7 +90,7 @@ test.describe('Блок 2. Библиотека — добавление и по
     void libraryWithBooks
     await libraryPage.open()
     await libraryPage.search(`nomatch_${randomString(10)}`)
-    // Все карточки должны исчезнуть
+
     await libraryPage.expectBookCount(0)
   })
 
@@ -114,7 +107,7 @@ test.describe('Блок 2. Библиотека — добавление и по
     libraryWithBooks,
   }) => {
     await libraryPage.open()
-    // У нас 3 книги — должно быть «3 книги»
+
     await expect(libraryPage.bookCountText).toContainText(/3 книги/)
     void libraryWithBooks
   })

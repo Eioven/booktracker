@@ -5,7 +5,6 @@ import AddBookModal from '../../components/AddBookModal'
 import Button from '../../components/ui/Button'
 import Spinner from '../../components/ui/Spinner'
 
-
 const STATUS_FILTERS = [
   { value: '',             label: 'Все книги'          },
   { value: 'reading',      label: 'Читаю'              },
@@ -61,7 +60,6 @@ const LibraryPage = () => {
   return (
     <div>
 
-      {/* Шапка страницы */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Библиотека</h1>
@@ -107,7 +105,7 @@ const LibraryPage = () => {
               className="w-full pl-9 pr-3 py-2 border border-gray-300
                 rounded-lg outline-none focus:border-blue-500 text-sm"
             />
-            {/* Иконка поиска */}
+
             <svg className="w-4 h-4 text-gray-400 absolute left-2.5 top-2.5"
               fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -126,7 +124,6 @@ const LibraryPage = () => {
 
       </div>
 
-      {/* Контент */}
       {loading ? (
         <div className="py-20">
           <Spinner size="lg" />

@@ -7,7 +7,6 @@ export interface TestUser {
   passwordConfirm: string
 }
 
-/** Свежий пользователь — каждый вызов генерирует новые значения. */
 export function buildUser(overrides: Partial<TestUser> = {}): TestUser {
   const password = overrides.password ?? strongPassword()
   return {
@@ -18,19 +17,11 @@ export function buildUser(overrides: Partial<TestUser> = {}): TestUser {
   }
 }
 
-/** Заведомо несуществующие учётные данные — для негативного логина. */
 export const NON_EXISTENT_USER = {
   username: 'no_such_user_zzz_404',
   password: 'whatever_pw_123!',
 }
 
-/**
- * Невалидные пароли, на которые срабатывают встроенные валидаторы Django:
- *   — слишком короткий,
- *   — состоит только из цифр,
- *   — слишком распространённый,
- *   — совпадает с username (UserAttributeSimilarityValidator).
- */
 export const WEAK_PASSWORDS = {
   short: 'ab12',
   numericOnly: '12345678',

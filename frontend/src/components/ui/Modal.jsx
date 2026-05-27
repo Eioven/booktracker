@@ -26,13 +26,12 @@ const Modal = ({ isOpen, onClose, title, children }) => {
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
       onClick={onClose}
     >
-      {/* Само окно — клик внутри не закрывает */}
+
       <div
         className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
 
-        {/* Шапка модалки */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
           <button

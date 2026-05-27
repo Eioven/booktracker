@@ -3,16 +3,6 @@ import { BasePage } from './BasePage'
 import { CoverEditModal } from './modals/CoverEditModal'
 import { STATUS_LABELS, type BookStatus } from '@data/books'
 
-/**
- * Страница конкретной книги.
- * Содержит:
- *   — StatusSelector
- *   — ProgressSection (доступна для reading/finished)
- *   — StarRating (оценка)
- *   — ReviewSection
- *   — вкладки «Заметки» / «Цитаты»
- *   — кнопки «Изменить обложку» / «Удалить из библиотеки»
- */
 export class BookPage extends BasePage {
   readonly coverModal: CoverEditModal
 
@@ -21,20 +11,15 @@ export class BookPage extends BasePage {
     this.coverModal = new CoverEditModal(page)
   }
 
-  /** Открыть страницу по идентификатору UserBook. */
   async openById(userBookId: number): Promise<void> {
     await this.goto(`/library/${userBookId}`)
     await expect(this.bookTitle).toBeVisible()
   }
 
-  // ===== Заголовок и базовые данные =====
-  // В Layout есть <h1>BookTracker</h1>, поэтому отсеиваем шапку
-  // и берём заголовок страницы книги (text-2xl font-bold).
   get bookTitle(): Locator {
     return this.page.locator('h1.text-2xl').first()
   }
 
-  // ===== Статус =====
   statusOption(status: BookStatus): Locator {
     return this.page.getByRole('button', { name: STATUS_LABELS[status], exact: true })
   }
@@ -43,7 +28,6 @@ export class BookPage extends BasePage {
     await this.statusOption(status).click()
   }
 
-  // ===== Обложка =====
   get changeCoverButton(): Locator {
     return this.page.getByRole('button', { name: /Изменить обложку|Добавить обложку/ })
   }
@@ -53,7 +37,6 @@ export class BookPage extends BasePage {
     await this.coverModal.expectOpen()
   }
 
-  // ===== Прогресс =====
   get currentPageInput(): Locator {
     return this.page.locator('input[type="number"]').first()
   }
@@ -70,14 +53,12 @@ export class BookPage extends BasePage {
     return this.page.locator('text=/^\\d+\\s*%/').first()
   }
 
-  /** Универсальный сохранитель текущей страницы. */
   async setCurrentPage(value: number): Promise<void> {
     await this.editProgressButton.click()
     await this.currentPageInput.fill(String(value))
     await this.savePageButton.click()
   }
 
-  // ===== Оценка =====
   get ratingStars(): Locator {
     return this.page.locator('div').filter({ hasText: /^Оценка$/ }).locator('..').locator('button')
   }
@@ -86,7 +67,6 @@ export class BookPage extends BasePage {
     await this.ratingStars.nth(value - 1).click()
   }
 
-  // ===== Отзыв =====
   get reviewTextarea(): Locator {
     return this.page.getByPlaceholder(/Поделитесь впечатлениями|отзыв|Напишите/i)
   }
@@ -107,7 +87,6 @@ export class BookPage extends BasePage {
     await this.reviewSaveButton.click()
   }
 
-  // ===== Вкладки заметок/цитат =====
   get notesTab(): Locator {
     return this.page.getByRole('button', { name: /Заметки \(\d+\)/ })
   }
@@ -116,7 +95,6 @@ export class BookPage extends BasePage {
     return this.page.getByRole('button', { name: /Цитаты \(\d+\)/ })
   }
 
-  // ----- Заметки -----
   get noteInput(): Locator {
     return this.page.getByPlaceholder(/Добавить заметку|Напишите заметку|Новая заметка/i)
   }
@@ -135,7 +113,6 @@ export class BookPage extends BasePage {
     await this.addNoteButton.click()
   }
 
-  // ----- Цитаты -----
   get quoteInput(): Locator {
     return this.page.getByPlaceholder(/Текст цитаты|Цитата/i)
   }
@@ -157,22 +134,16 @@ export class BookPage extends BasePage {
     await this.addQuoteButton.click()
   }
 
-  // ===== Удаление =====
   get deleteButton(): Locator {
     return this.page.getByRole('button', { name: 'Удалить из библиотеки' })
   }
 
-  /**
-   * Удаляет книгу. На странице используется window.confirm,
-   * поэтому подписываемся на событие dialog заранее.
-   */
   async deleteBook(): Promise<void> {
     this.page.once('dialog', (d) => d.accept())
     await this.deleteButton.click()
     await this.page.waitForURL(/\/library(\?.*)?$/)
   }
 
-  // ===== Ассерты =====
   async expectStatusSelected(status: BookStatus): Promise<void> {
     await expect(this.statusOption(status)).toHaveClass(/bg-|text-/)
   }

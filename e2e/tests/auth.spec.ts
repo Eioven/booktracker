@@ -4,11 +4,6 @@ import { registerUser, createApiContext } from '@api/booktracker'
 import { uniqueUsername } from '@helpers/random'
 import * as allure from '@helpers/allure'
 
-/**
- * Блок 1. Аутентификация — 14 сценариев (9 @critical, 2 @smoke).
- * Покрывает регистрацию, вход, выход, валидацию форм и защиту маршрутов.
- */
-
 test.describe('Блок 1. Аутентификация', () => {
   test.beforeEach(async () => {
     await allure.epic('Аутентификация')
@@ -38,12 +33,12 @@ test.describe('Блок 1. Аутентификация', () => {
     await registerPage.open()
     await registerPage.fillForm({ ...freshUser, password: WEAK_PASSWORDS.short, passwordConfirm: WEAK_PASSWORDS.short })
     await registerPage.submit()
-    // Серверная или клиентская ошибка
+
     await expect(registerPage.page.locator('.text-red-500, .bg-red-50').first()).toBeVisible()
   })
 
   test('AUTH-04 @critical Регистрация — занятый username', async ({ registerPage, freshUser }) => {
-    // Регистрируем через API
+
     const api = await createApiContext()
     await registerUser(api, freshUser)
     await api.dispose()
@@ -56,7 +51,7 @@ test.describe('Блок 1. Аутентификация', () => {
   test('AUTH-05 @critical Регистрация — пустые обязательные поля', async ({ registerPage }) => {
     await registerPage.open()
     await registerPage.submit()
-    // На странице остался текст кнопки и URL
+
     await expect(registerPage.page).toHaveURL(/\/register/)
     await expect(registerPage.page.locator('.text-red-500').first()).toBeVisible()
   })
@@ -65,7 +60,7 @@ test.describe('Блок 1. Аутентификация', () => {
     await registerPage.open()
     await registerPage.fillForm({ ...freshUser, email: 'not-an-email' })
     await registerPage.submit()
-    // Если фронт валидирует — увидим красное поле; если нет — сервер вернёт ошибку
+
     await expect(registerPage.page.locator('.text-red-500, .bg-red-50').first()).toBeVisible({ timeout: 5_000 })
   })
 
@@ -74,7 +69,7 @@ test.describe('Блок 1. Аутентификация', () => {
     page,
     freshUser,
   }) => {
-    // Сначала регистрируем через API
+
     const api = await createApiContext()
     await registerUser(api, freshUser)
     await api.dispose()
@@ -112,7 +107,7 @@ test.describe('Блок 1. Аутентификация', () => {
     await dashboardPage.open()
     await dashboardPage.logout()
     await loginPage.expectOnLoginPage()
-    // localStorage очищен
+
     const token = await page.evaluate(() => window.localStorage.getItem('access_token'))
     expect(token).toBeFalsy()
   })
@@ -138,7 +133,6 @@ test.describe('Блок 1. Аутентификация', () => {
     await registerPage.register(u1)
     await expect(page).not.toHaveURL(/\/register/, { timeout: 10_000 })
 
-    // Выходим
     await page.getByRole('button', { name: 'Выйти' }).click()
     await page.waitForURL(/\/login/)
 

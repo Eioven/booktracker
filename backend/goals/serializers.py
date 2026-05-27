@@ -2,14 +2,7 @@ from rest_framework import serializers
 from django.utils import timezone
 from .models import Goal
 
-
 class GoalSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для целей чтения.
-    Помимо стандартных полей модели возвращает
-    два вычисляемых поля: current_value и progress_percent.
-    Они не хранятся в БД — считаются динамически.
-    """
 
     current_value = serializers.SerializerMethodField()
     progress_percent = serializers.SerializerMethodField()
@@ -28,9 +21,7 @@ class GoalSerializer(serializers.ModelSerializer):
         )
 
     def get_current_value(self, obj):
-        """
-        Фактическое значение выполнения цели.
-        """
+
         user = self.context['request'].user
 
         if obj.measure_type == 'books':
@@ -58,11 +49,8 @@ class GoalSerializer(serializers.ModelSerializer):
 
         return 0
 
-
     def get_progress_percent(self, obj):
-        """
-        Считает процент выполнения цели.
-        """
+
         current = self.get_current_value(obj)
         if obj.target and obj.target > 0:
             percent = round((current / obj.target) * 100, 1)

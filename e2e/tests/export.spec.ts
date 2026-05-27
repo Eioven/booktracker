@@ -1,10 +1,6 @@
 import { test, expect } from '@fixtures/base'
 import * as allure from '@helpers/allure'
 
-/**
- * Блок 6. Экспорт — 5 сценариев (4 @critical).
- */
-
 test.describe('Блок 6. Экспорт данных', () => {
   test.beforeEach(async () => {
     await allure.epic('Экспорт')
@@ -19,7 +15,7 @@ test.describe('Блок 6. Экспорт данных', () => {
     await profilePage.open()
     const download = await profilePage.triggerExport('library', 'csv')
     expect(download.suggestedFilename()).toMatch(/\.csv$/i)
-    // Проверка, что файл непустой
+
     const path = await download.path()
     expect(path).toBeTruthy()
   })
